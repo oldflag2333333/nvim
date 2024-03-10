@@ -21,10 +21,7 @@ end
 -- lazy vim settings
 local opts = {
   -- local plugins location
-  dev = {
-    path = '~/.local/share/nvim/nix',
-    fallback = false,
-  },
+  dev = { path = '~/.local/share/nvim/nix' },
 }
 
 require('lazy').setup(plugins, opts)
