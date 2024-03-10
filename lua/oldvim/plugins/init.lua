@@ -9,6 +9,7 @@ return {
   require 'oldvim.plugins.oil',
   require 'oldvim.plugins.dashboard',
   require 'oldvim.plugins.lualine',
+  require 'oldvim.plugins.bufferline',
   require 'oldvim.plugins.dap',
   -- require 'oldvim.plugins.neo-tree',
 }
