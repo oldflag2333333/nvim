@@ -8,7 +8,7 @@ return {
     {
       '<leader>fe',
       function()
-        require('neo-tree.command').execute { toggle = true, dir = util.lsp.root() }
+        require('neo-tree.command').execute { toggle = true, dir = util.root.get() }
       end,
       desc = 'Explorer NeoTree (root dir)',
     },

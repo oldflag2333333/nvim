@@ -11,5 +11,5 @@ return {
   require 'oldvim.plugins.lualine',
   require 'oldvim.plugins.bufferline',
   require 'oldvim.plugins.dap',
-  -- require 'oldvim.plugins.neo-tree',
+  require 'oldvim.plugins.neo-tree',
 }
