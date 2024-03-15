@@ -27,6 +27,9 @@ opt.confirm = true
 -- Don't show the mode, since it's already in status line
 opt.showmode = false
 
+-- Enable auto write
+opt.autowrite = true
+
 -- Sync clipboard between OS and Neovim.
 --  See `:help 'clipboard'`
 opt.clipboard = 'unnamedplus'
@@ -81,3 +84,23 @@ opt.hlsearch = true
 opt.termguicolors = true
 
 opt.sessionoptions = { 'buffers', 'curdir', 'tabpages', 'winsize', 'help', 'globals', 'skiprtp', 'folds' }
+
+opt.wildmode = 'longest:full,full' -- Command-line completion mode
+
+-- Minimum window width
+opt.winminwidth = 5
+
+-- Disable line wrap
+opt.wrap = false
+
+opt.shortmess:append { W = true, I = true, c = true, C = true }
+
+opt.fillchars = {
+  foldopen = '',
+  foldclose = '',
+  -- fold = "⸱",
+  fold = ' ',
+  foldsep = ' ',
+  diff = '╱',
+  eob = ' ',
+}
