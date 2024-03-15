@@ -79,3 +79,5 @@ opt.hlsearch = true
 
 -- True color support
 opt.termguicolors = true
+
+opt.sessionoptions = { 'buffers', 'curdir', 'tabpages', 'winsize', 'help', 'globals', 'skiprtp', 'folds' }
