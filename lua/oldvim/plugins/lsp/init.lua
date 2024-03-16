@@ -88,8 +88,8 @@ local M = { -- LSP Configuration & Plugins, see `:help lsp-vs-treesitter`
     capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
     -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
-
     require('oldvim.plugins.lsp.lua_ls').setup(lspconfig, capabilities)
+    require('oldvim.plugins.lsp.clangd').setup(lspconfig, capabilities)
   end,
 }
 
