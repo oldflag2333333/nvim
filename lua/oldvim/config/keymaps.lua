@@ -3,6 +3,7 @@
 local map = require('oldvim.util').bind
 
 map('n', '<Esc>', '<cmd>nohlsearch<CR>')
+map('v', 'p', '_dp')
 
 -- Diagnostic keymaps
 map('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
