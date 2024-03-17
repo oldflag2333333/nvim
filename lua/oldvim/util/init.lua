@@ -2,6 +2,7 @@ local M = {}
 
 M.bind = function(mode, lhs, rhs, opts)
   opts = opts or {}
+  -- default to true
   opts.silent = opts.silent ~= false
   vim.keymap.set(mode, lhs, rhs, opts)
 end
