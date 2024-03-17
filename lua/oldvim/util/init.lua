@@ -1,13 +1,9 @@
 local M = {}
 
-local default_opt = {
-  silent = true,
-  noremap = true,
-}
-
-M.bind = function(mode, lhs, rhs, opt)
-  opt = opt or default_opt
-  vim.keymap.set(mode, lhs, rhs, opt)
+M.bind = function(mode, lhs, rhs, opts)
+  opts = opts or {}
+  opts.silent = opts.silent ~= false
+  vim.keymap.set(mode, lhs, rhs, opts)
 end
 
 M.augroup = function(name)
