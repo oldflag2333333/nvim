@@ -8,6 +8,8 @@ return {
 
   'nvim-tree/nvim-web-devicons',
 
+  'nvim-neotest/nvim-nio',
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
