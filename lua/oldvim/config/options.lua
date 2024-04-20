@@ -5,7 +5,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- vim.g.autoformat = true
--- vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
+vim.g.root_spec = { 'lsp', { '.git', 'lua' }, 'cwd' }
 
 local opt = vim.opt
 
@@ -26,6 +26,9 @@ opt.confirm = true
 
 -- Don't show the mode, since it's already in status line
 opt.showmode = false
+
+-- Enable auto write
+opt.autowrite = true
 
 -- Sync clipboard between OS and Neovim.
 --  See `:help 'clipboard'`
@@ -60,6 +63,7 @@ opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 opt.inccommand = 'split'
+-- opt.inccommand = 'nosplit'
 
 -- Show which line your cursor is on
 opt.cursorline = true
@@ -79,3 +83,25 @@ opt.hlsearch = true
 
 -- True color support
 opt.termguicolors = true
+
+opt.sessionoptions = { 'buffers', 'curdir', 'tabpages', 'winsize', 'help', 'globals', 'skiprtp', 'folds' }
+
+opt.wildmode = 'longest:full,full' -- Command-line completion mode
+
+-- Minimum window width
+opt.winminwidth = 5
+
+-- Disable line wrap
+opt.wrap = false
+
+opt.shortmess:append { W = true, I = true, c = true, C = true }
+
+opt.fillchars = {
+  foldopen = '',
+  foldclose = '',
+  -- fold = "⸱",
+  fold = ' ',
+  foldsep = ' ',
+  diff = '╱',
+  eob = ' ',
+}

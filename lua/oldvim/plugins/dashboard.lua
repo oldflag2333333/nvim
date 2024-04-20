@@ -4,16 +4,17 @@ return {
   event = 'VimEnter',
   opts = function()
     local logo = [[
-           ██╗   ██╗██╗███╗   ███╗          Z
-           ██║   ██║██║████╗ ████║      Z    
-           ██║   ██║██║██╔████╔██║   z       
-           ╚██╗ ██╔╝██║██║╚██╔╝██║ z         
-            ╚████╔╝ ██║██║ ╚═╝ ██║           
-             ╚═══╝  ╚═╝╚═╝     ╚═╝           
+           ███╗  ██╗  ██╗   ██╗  ██╗  ███╗   ███╗          Z
+           ████╗ ██║  ██║   ██║  ██║  ████╗ ████║      Z    
+           ██╔██╗██║  ██║   ██║  ██║  ██╔████╔██║   z       
+           ██║╚████║  ╚██╗ ██╔╝  ██║  ██║╚██╔╝██║ z         
+           ██║ ╚███║   ╚████╔╝   ██║  ██║ ╚═╝ ██║           
+           ╚═╝  ╚══╝    ╚═══╝    ╚═╝  ╚═╝     ╚═╝           
       ]]
 
     logo = string.rep('\n', 8) .. logo .. '\n\n'
 
+    local lazy = require('oldvim.util').lazy
     local opts = {
       theme = 'doom',
       hide = {
@@ -34,7 +35,7 @@ return {
           { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
         },
         footer = function()
-          local stats = require('lazy').stats()
+          local stats = lazy.stats()
           local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
           return { '⚡ Neovim loaded ' .. stats.loaded .. '/' .. stats.count .. ' plugins in ' .. ms .. 'ms' }
         end,
@@ -52,7 +53,7 @@ return {
       vim.api.nvim_create_autocmd('User', {
         pattern = 'DashboardLoaded',
         callback = function()
-          require('lazy').show()
+          lazy.show()
         end,
       })
     end

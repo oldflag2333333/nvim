@@ -22,6 +22,7 @@ return {
     bind('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     bind('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
     bind('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
+    bind('n', '<F9>', dap.terminate, { desc = 'Debug: Terminate' })
     bind('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
     bind('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
@@ -55,5 +56,7 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+    vim.api.nvim_set_hl(0, 'DapStoppedLine', { default = true, link = 'Visual' })
   end,
 }

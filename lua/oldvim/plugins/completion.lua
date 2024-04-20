@@ -36,7 +36,8 @@ local M = {
       },
       window = {
         completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
+        -- documentation = cmp.config.window.bordered(),
+        documentation = false,
       },
       completion = { completeopt = 'menu,menuone,noinsert' },
       mapping = cmp.mapping.preset.insert {
@@ -45,15 +46,24 @@ local M = {
         -- Select the [p]revious item
         ['<C-p>'] = cmp.mapping.select_prev_item(),
 
+        ['<C-j>'] = cmp.mapping(cmp.mapping.scroll_docs(1), { 'i', 'c' }),
+        ['<C-k>'] = cmp.mapping(cmp.mapping.scroll_docs(-1), { 'i', 'c' }),
+
+        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-5), { 'i', 'c' }),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(5), { 'i', 'c' }),
+
+        ['<C-c>'] = cmp.mapping { i = cmp.mapping.abort(), c = cmp.mapping.close() },
+
         -- Accept ([y]es) the completion.
         --  This will auto-import if your LSP supports it.
         --  This will expand snippets if the LSP sent a snippet.
         ['<C-y>'] = cmp.mapping.confirm { select = true },
+        ['<CR>'] = cmp.mapping.confirm { select = true },
 
         -- Manually trigger a completion from nvim-cmp.
         --  Generally you don't need this, because nvim-cmp will display
         --  completions whenever it has completion options available.
-        ['<C-Space>'] = cmp.mapping.complete {},
+        ['<C-.>'] = cmp.mapping.complete {},
 
         -- Think of <c-l> as moving to the right of your snippet expansion.
         --  So if you have a snippet that's like:

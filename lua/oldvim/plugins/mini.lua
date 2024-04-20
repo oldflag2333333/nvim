@@ -1,3 +1,5 @@
+local util = require 'oldvim.util'
+
 return {
   {
     -- Better Around/Inside textobjects
@@ -7,7 +9,7 @@ return {
     --  - yinq - [Y]ank [I]nside [N]ext [']quote
     --  - ci'  - [C]hange [I]nside [']quote
     'echasnovski/mini.ai',
-    version = false,
+    version = '*',
     opts = { n_lines = 500 },
   },
   {
@@ -17,32 +19,11 @@ return {
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
     'echasnovski/mini.surround',
-    version = false,
-  },
-  {
-    'echasnovski/mini.statusline',
-    enabled = false,
-    version = false,
-    -- enabled = false,
-    config = function()
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      statusline.setup()
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
-    end,
+    version = '*',
   },
   {
     'echasnovski/mini.bufremove',
-    version = false,
+    version = '*',
     keys = {
       {
         '<leader>bd',
@@ -69,5 +50,44 @@ return {
         desc = 'Delete Buffer (Force)',
       },
     },
+  },
+  -- Active indent guide and indent text objects. When you're browsing
+  -- code, this highlights the current level of indentation, and animates
+  -- the highlighting.
+  {
+    'echasnovski/mini.indentscope',
+    version = '*',
+    event = 'VeryLazy',
+    opts = {
+      symbol = '│',
+      draw = {
+        -- disable animation
+        -- stylua: ignore
+        animation = function() return 0 end,
+      },
+      options = { try_as_border = true },
+    },
+    init = function()
+      util.autocmd('FileType', {
+        pattern = {
+          'help',
+          'alpha',
+          'dashboard',
+          'neo-tree',
+          'Trouble',
+          'trouble',
+          'lazy',
+          'mason',
+          'notify',
+          'toggleterm',
+          'lazyterm',
+          'oil',
+          'oil_preview',
+        },
+        callback = function()
+          vim.b.miniindentscope_disable = true
+        end,
+      })
+    end,
   },
 }

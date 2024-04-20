@@ -1,7 +1,7 @@
 local M = { -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
-  event = 'VimEnter',
-  -- event = 'VeryLazy',
+  -- event = 'VimEnter',
+  event = 'VeryLazy',
   branch = '0.1.x',
   dependencies = {
     'nvim-lua/plenary.nvim',
@@ -68,6 +68,7 @@ M.config = function()
   -- Enable telescope extensions, if they are installed
   pcall(require('telescope').load_extension, 'fzf')
   pcall(require('telescope').load_extension, 'ui-select')
+  pcall(require('telescope').load_extension, 'noice')
 
   -- See `:help telescope.builtin`
   local builtin = require 'telescope.builtin'
