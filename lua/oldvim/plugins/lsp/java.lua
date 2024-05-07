@@ -192,11 +192,7 @@ return {
       jdtls_dap.setup_dap_main_class_configs {}
       jdtls_setup.add_commands()
 
-      local function fmt(_)
-        vim.lsp.buf.format()
-      end
-
-      vim.api.nvim_buf_create_user_command(bufnr, 'Format', fmt)
+      vim.api.nvim_buf_create_user_command(bufnr, 'Format', vim.lsp.buf.format)
     end
 
     local function attach_jdtls()
