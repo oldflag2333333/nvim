@@ -1,6 +1,6 @@
 local M = {}
 
-function M.setup(lspconfig, capabilities)
+function M.setup(capabilities)
   -- capabilities.offsetEncoding = { 'utf-16' }
 
   local clangd = {
@@ -23,7 +23,8 @@ function M.setup(lspconfig, capabilities)
       clangdFileStatus = true,
     },
   }
-  lspconfig.clangd.setup(clangd)
+  vim.lsp.config.clangd = clangd
+  vim.lsp.enable('clangd')
 end
 
 return M

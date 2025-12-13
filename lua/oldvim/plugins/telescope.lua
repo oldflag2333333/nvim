@@ -2,7 +2,7 @@ local M = { -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
   -- event = 'VimEnter',
   event = 'VeryLazy',
-  branch = '0.1.x',
+  tag = 'v0.2.0',
   dependencies = {
     'nvim-lua/plenary.nvim',
     {

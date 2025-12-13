@@ -1,6 +1,6 @@
 local M = {}
 
-function M.setup(lspconfig, capabilities)
+function M.setup(capabilities)
   -- For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
   local lua_ls = {
     -- cmd = {...},
@@ -29,7 +29,8 @@ function M.setup(lspconfig, capabilities)
       },
     },
   }
-  lspconfig.lua_ls.setup(lua_ls)
+  vim.lsp.config.lua_ls = lua_ls
+  vim.lsp.enable('lua_ls')
 end
 
 return M

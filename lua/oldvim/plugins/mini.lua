@@ -90,4 +90,5 @@ return {
       })
     end,
   },
+  { 'nvim-mini/mini.icons', version = false },
 }
