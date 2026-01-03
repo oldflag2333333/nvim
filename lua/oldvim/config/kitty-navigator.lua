@@ -7,10 +7,10 @@ local in_kitty = vim.env.KITTY_LISTEN_ON ~= nil
 
 if not in_kitty then
   -- 不在 kitty 中，使用默认窗口导航
-  vim.keymap.set('n', '<C-S-h>', '<C-w>h', { desc = 'Go to left window', silent = true })
-  vim.keymap.set('n', '<C-S-j>', '<C-w>j', { desc = 'Go to lower window', silent = true })
-  vim.keymap.set('n', '<C-S-k>', '<C-w>k', { desc = 'Go to upper window', silent = true })
-  vim.keymap.set('n', '<C-S-l>', '<C-w>l', { desc = 'Go to right window', silent = true })
+  vim.keymap.set({ 'n', 't' }, '<C-S-h>', '<C-w>h', { desc = 'Go to left window', silent = true })
+  vim.keymap.set({ 'n', 't' }, '<C-S-j>', '<C-w>j', { desc = 'Go to lower window', silent = true })
+  vim.keymap.set({ 'n', 't' }, '<C-S-k>', '<C-w>k', { desc = 'Go to upper window', silent = true })
+  vim.keymap.set({ 'n', 't' }, '<C-S-l>', '<C-w>l', { desc = 'Go to right window', silent = true })
   return
 end
 
@@ -50,9 +50,9 @@ end
 
 -- 主导航函数
 local function navigate(direction)
-  -- 如果是浮动窗口，忽略 kitty 导航
+  -- 如果是浮动窗口，直接导航到 kitty panel
   if is_floating_window() then
-    vim.cmd('wincmd ' .. direction)
+    navigate_kitty(direction)
     return
   end
 
@@ -75,7 +75,7 @@ end
 local map_opts = { silent = true, noremap = true }
 
 vim.keymap.set(
-  'n',
+  { 'n', 't' },
   '<C-S-h>',
   function()
     navigate 'h'
@@ -84,7 +84,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set(
-  'n',
+  { 'n', 't' },
   '<C-S-j>',
   function()
     navigate 'j'
@@ -93,7 +93,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set(
-  'n',
+  { 'n', 't' },
   '<C-S-k>',
   function()
     navigate 'k'
@@ -102,7 +102,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set(
-  'n',
+  { 'n', 't' },
   '<C-S-l>',
   function()
     navigate 'l'
