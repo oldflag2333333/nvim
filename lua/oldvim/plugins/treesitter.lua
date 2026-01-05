@@ -7,6 +7,7 @@
 -- Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 local M = {
   'nvim-treesitter/nvim-treesitter',
+  enabled = false,
   dev = true,
   version = false,
   main = 'nvim-treesitter.configs',
@@ -18,6 +19,7 @@ local M = {
   dependencies = {
     {
       'nvim-treesitter/nvim-treesitter-textobjects',
+      lazy = true,
       config = function()
         -- When in diff mode, we want to use the default
         -- vim text objects c & C instead of the treesitter ones.
