@@ -8,15 +8,7 @@ local M = {
     'nvim-treesitter/nvim-treesitter-textobjects',
   },
   config = function()
-    local parser_dir = vim.fn.stdpath 'data' .. '/treesitter-parser'
-
-    local parser_path = parser_dir .. '/parser'
-    if vim.fn.isdirectory(parser_path) == 0 then
-      vim.notify('Treesitter parsers not found at: ' .. parser_path, vim.log.levels.WARN)
-    end
-
     require('nvim-treesitter.configs').setup {
-      parser_install_dir = parser_dir,
       textobjects = {
         move = {
           enable = true,
