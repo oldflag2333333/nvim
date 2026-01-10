@@ -1,75 +1,116 @@
--- [[ Configure Treesitter ]] See `:help nvim-treesitter`
--- There are additional nvim-treesitter modules that you can use to interact
--- with nvim-treesitter. You should go explore a few and see what interests you:
---
--- Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
--- Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
--- Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 local M = {
   'nvim-treesitter/nvim-treesitter',
-  enabled = false,
+  enabled = true,
   dev = true,
-  version = false,
-  main = 'nvim-treesitter.configs',
-  event = 'VeryLazy',
   init = function(plugin)
     require('lazy.core.loader').add_to_rtp(plugin)
-    require 'nvim-treesitter.query_predicates'
   end,
   dependencies = {
     {
       'nvim-treesitter/nvim-treesitter-textobjects',
-      lazy = true,
       config = function()
-        -- When in diff mode, we want to use the default
-        -- vim text objects c & C instead of the treesitter ones.
-        local move = require 'nvim-treesitter.textobjects.move' ---@type table<string,fun(...)>
-        local configs = require 'nvim-treesitter.configs'
-        for name, fn in pairs(move) do
-          if name:find 'goto' == 1 then
-            move[name] = function(q, ...)
-              if vim.wo.diff then
-                local config = configs.get_module('textobjects.move')[name] ---@type table<string,string>
-                for key, query in pairs(config or {}) do
-                  if q == query and key:find '[%]%[][cC]' then
-                    vim.cmd('normal! ' .. key)
-                    return
-                  end
-                end
+        require('nvim-treesitter-textobjects').setup()
+
+        local move = require 'nvim-treesitter-textobjects.move'
+
+        local function make_diff_wrapper(func)
+          return function(query, ...)
+            if vim.wo.diff then
+              local key = vim.fn.keytrans(vim.api.nvim_replace_termcodes('<C-]>', true, false, true))
+              if key == ']' then
+                return vim.cmd 'normal! ]c'
+              elseif key == '[' then
+                return vim.cmd 'normal! [c'
               end
-              return fn(q, ...)
             end
+            return func(query, ...)
           end
         end
+
+        local goto_next_start = make_diff_wrapper(move.goto_next_start)
+        local goto_next_end = make_diff_wrapper(move.goto_next_end)
+        local goto_previous_start = make_diff_wrapper(move.goto_previous_start)
+        local goto_previous_end = make_diff_wrapper(move.goto_previous_end)
+
+        local function set_keymaps()
+          pcall(vim.keymap.del, 'n', ']fs')
+          pcall(vim.keymap.del, 'n', ']fe')
+          pcall(vim.keymap.del, 'n', ']cs')
+          pcall(vim.keymap.del, 'n', ']ce')
+          pcall(vim.keymap.del, 'n', '[fs')
+          pcall(vim.keymap.del, 'n', '[fe')
+          pcall(vim.keymap.del, 'n', '[cs')
+          pcall(vim.keymap.del, 'n', '[ce')
+
+          vim.keymap.set('n', ']fs', function()
+            goto_next_start '@function.outer'
+          end, { desc = 'Next function start' })
+          vim.keymap.set('n', ']fe', function()
+            goto_next_end '@function.outer'
+          end, { desc = 'Next function end' })
+          vim.keymap.set('n', ']cs', function()
+            goto_next_start '@class.outer'
+          end, { desc = 'Next class start' })
+          vim.keymap.set('n', ']ce', function()
+            goto_next_end '@class.outer'
+          end, { desc = 'Next class end' })
+          vim.keymap.set('n', '[fs', function()
+            goto_previous_start '@function.outer'
+          end, { desc = 'Previous function start' })
+          vim.keymap.set('n', '[fe', function()
+            goto_previous_end '@function.outer'
+          end, { desc = 'Previous function end' })
+          vim.keymap.set('n', '[cs', function()
+            goto_previous_start '@class.outer'
+          end, { desc = 'Previous class start' })
+          vim.keymap.set('n', '[ce', function()
+            goto_previous_end '@class.outer'
+          end, { desc = 'Previous class end' })
+        end
+
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = '*',
+          callback = function()
+            if pcall(require, 'nvim-treesitter-textobjects') then
+              set_keymaps()
+            end
+          end,
+        })
       end,
     },
   },
-  keys = {
-    { '<c-space>', desc = 'Increment selection' },
-    { '<bs>', desc = 'Decrement selection', mode = 'x' },
-  },
-  opts = {
-    highlight = { enable = true },
-    indent = { enable = true },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = '<C-space>',
-        node_incremental = '<C-space>',
-        scope_incremental = false,
-        node_decremental = '<bs>',
-      },
-    },
-    textobjects = {
-      move = {
-        enable = true,
-        goto_next_start = { [']fs'] = '@function.outer', [']cs'] = '@class.outer' },
-        goto_next_end = { [']fe'] = '@function.outer', [']ce'] = '@class.outer' },
-        goto_previous_start = { ['[fs'] = '@function.outer', ['[cs'] = '@class.outer' },
-        goto_previous_end = { ['[fe'] = '@function.outer', ['[ce'] = '@class.outer' },
-      },
-    },
-  },
+  config = function()
+    local parser_dir = vim.fn.stdpath 'data' .. '/nix/nvim-treesitter'
+
+    local parser_path = parser_dir .. '/parser'
+    if vim.fn.isdirectory(parser_path) == 0 then
+      vim.notify('Treesitter parsers not found at: ' .. parser_path, vim.log.levels.WARN)
+    end
+
+    require('nvim-treesitter').setup {
+      install_dir = parser_dir,
+    }
+
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = '*',
+      callback = function()
+        if pcall(function()
+          return vim.treesitter.get_parser()
+        end) then
+          vim.treesitter.start()
+        end
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = '*',
+      callback = function()
+        if pcall(require, 'nvim-treesitter') then
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end,
+    })
+  end,
 }
 
 return M
