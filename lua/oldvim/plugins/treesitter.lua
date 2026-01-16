@@ -9,6 +9,9 @@ local M = {
   },
   config = function()
     require('nvim-treesitter.configs').setup {
+      indent = {
+        enable = true,
+      },
       textobjects = {
         move = {
           enable = true,
@@ -93,15 +96,6 @@ local M = {
           return vim.treesitter.get_parser()
         end) then
           vim.treesitter.start()
-        end
-      end,
-    })
-
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = '*',
-      callback = function()
-        if pcall(require, 'nvim-treesitter') then
-          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end
       end,
     })
