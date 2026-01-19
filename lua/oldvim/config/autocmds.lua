@@ -33,7 +33,7 @@ autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 autocmd('FileType', {
   desc = 'Wrap and check for spell in text filetypes',
   group = augroup 'wrap_spell',
-  pattern = { 'gitcommit', 'markdown' },
+  pattern = { 'gitcommit' },
   callback = function()
     vim.opt_local.wrap = true
     vim.opt_local.spell = true
