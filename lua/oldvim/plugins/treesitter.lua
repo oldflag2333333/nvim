@@ -2,6 +2,7 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     enabled = true,
+    build = ':TSUpdate',
     init = function(plugin)
       require('lazy.core.loader').add_to_rtp(plugin)
     end,
