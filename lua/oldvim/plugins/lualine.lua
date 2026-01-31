@@ -60,9 +60,8 @@ return {
     local opts = {
       options = {
         theme = 'auto',
-        -- section_separators = { left = '', right = '' },
-        -- component_separators = { left = '│', right = '│' },
-        -- component_separators = { left = '', right = '' },
+        component_separators = '',
+        section_separators = { left = '', right = '' },
         globalstatus = true,
         disabled_filetypes = {
           statusline = { 'dashboard', 'alpha', 'starter' },
@@ -70,7 +69,6 @@ return {
       },
       sections = {
         lualine_a = { mode.get_mode },
-        -- lualine_b = { 'branch', 'diagnostics' },
       },
     }
     require('lualine').setup(opts)
