@@ -1,9 +1,33 @@
--- Kitty + Neovim 无缝窗口导航
--- 使用 Ctrl+Shift+h/j/k/l 在 Neovim 和 Kitty 窗口之间导航
--- 直接加载，不使用 lazy.nvim
+-- Kitty + Neovim seamless window navigation
+-- Use Ctrl+Shift+h/j/k/l to navigate between Neovim and Kitty windows
+-- Loaded directly, not using lazy.nvim
 
--- 检查是否在 kitty 环境中运行
-local in_kitty = vim.env.KITTY_LISTEN_ON ~= nil
+local function get_kitty_socket()
+  local env_socket = vim.env.KITTY_LISTEN_ON
+  if not env_socket or env_socket == "" then
+    return nil
+  end
+  local socket_path = env_socket:gsub("^unix:", "")
+  if vim.fn.filereadable(socket_path) == 1 then
+    return env_socket
+  end
+  local handle = io.popen("ls " .. socket_path .. "-* 2>/dev/null | head -1")
+  if handle then
+    local result = handle:read("*l")
+    handle:close()
+    if result and result ~= "" then
+      return "unix:" .. result
+    end
+  end
+  return env_socket
+end
+
+local kitty_socket = get_kitty_socket()
+local in_kitty = kitty_socket ~= nil
+
+if not in_kitty then
+  vim.notify("Kitty-nav: Not in kitty environment", vim.log.levels.WARN)
+end
 
 if not in_kitty then
   -- 不在 kitty 中，使用默认窗口导航
@@ -22,24 +46,26 @@ local direction_map = {
   l = 'right',
 }
 
--- 调用 kitty remote control 切换到相邻窗口
 local function navigate_kitty(direction)
-  local socket = vim.env.KITTY_LISTEN_ON
   local kitty_direction = direction_map[direction]
 
-  if not socket or not kitty_direction then
+  if not kitty_socket or not kitty_direction then
+    vim.notify("Kitty-nav: socket or direction missing", vim.log.levels.ERROR)
     return
   end
 
-  -- 使用 kitty @ focus-window 命令
   local cmd = string.format(
-    'kitty @ --to=%s focus-window --match neighbor:%s 2>/dev/null',
-    vim.fn.shellescape(socket),
+    'kitten @ --to=%s focus-window --match neighbor:%s',
+    kitty_socket,
     kitty_direction
   )
 
-  -- 异步执行，避免阻塞
-  vim.fn.system(cmd)
+  local result = vim.fn.system(cmd)
+  local exit_code = vim.v.shell_error
+
+  if exit_code ~= 0 then
+    vim.notify(string.format("Kitty-nav ERROR: cmd=%s\nexit=%d\nresult=%s", cmd, exit_code, result), vim.log.levels.ERROR)
+  end
 end
 
 -- 检测当前窗口是否是浮动窗口
@@ -50,26 +76,29 @@ end
 
 -- 主导航函数
 local function navigate(direction)
-  -- 如果是浮动窗口，直接导航到 kitty panel
+  local current_win = vim.fn.winnr()
+
   if is_floating_window() then
     navigate_kitty(direction)
     return
   end
 
-  -- 记录当前窗口号
-  local current_win = vim.fn.winnr()
-
-  -- 尝试在 Neovim 内移动
   vim.cmd('wincmd ' .. direction)
 
-  -- 获取移动后的窗口号
   local new_win = vim.fn.winnr()
-
-  -- 如果窗口号没变，说明在边界，尝试切换 kitty 窗口
   if current_win == new_win then
     navigate_kitty(direction)
   end
 end
+
+vim.api.nvim_create_user_command('KittyNavTest', function()
+  vim.notify("Kitty socket: " .. tostring(kitty_socket), vim.log.levels.INFO)
+  if kitty_socket then
+    local cmd = string.format('kitten @ --to=%s ls', kitty_socket)
+    local result = vim.fn.system(cmd)
+    vim.notify("Test cmd: " .. cmd .. "\nResult: " .. result, vim.log.levels.INFO)
+  end
+end, { desc = 'Test kitty navigator connection' })
 
 -- 设置快捷键
 local map_opts = { silent = true, noremap = true }
