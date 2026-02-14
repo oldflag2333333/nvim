@@ -1,1 +1,1 @@
-require 'oldvim'
+/nix/store/ijiqcyx3mgsc65p2l1by5lkn5iwyhin3-home-manager-files/.config/nvim/init.lua
