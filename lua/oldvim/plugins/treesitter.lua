@@ -1,12 +1,16 @@
 local M = {
   'nvim-treesitter/nvim-treesitter',
+  branch = 'master',
   enabled = true,
   lazy = false,
   init = function(plugin)
     require('lazy.core.loader').add_to_rtp(plugin)
   end,
   dependencies = {
-    'nvim-treesitter/nvim-treesitter-textobjects',
+    {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      branch = 'master',
+    },
   },
   config = function()
     require('nvim-treesitter-textobjects').setup {
