@@ -1,6 +1,7 @@
 local M = {
   'nvim-treesitter/nvim-treesitter',
   enabled = true,
+  lazy = false,
   init = function(plugin)
     require('lazy.core.loader').add_to_rtp(plugin)
   end,
@@ -8,20 +9,13 @@ local M = {
     'nvim-treesitter/nvim-treesitter-textobjects',
   },
   config = function()
-    require('nvim-treesitter.configs').setup {
-      indent = {
-        enable = true,
-      },
-      textobjects = {
-        move = {
-          enable = true,
-          set_jumps = true,
-        },
+    require('nvim-treesitter-textobjects').setup {
+      move = {
+        set_jumps = true,
       },
     }
-    require('nvim-treesitter').setup()
 
-    local move = require 'nvim-treesitter.textobjects.move'
+    local move = require 'nvim-treesitter-textobjects.move'
 
     local function make_diff_wrapper(func)
       return function(query, ...)
