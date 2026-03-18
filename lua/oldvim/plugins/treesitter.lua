@@ -13,13 +13,19 @@ local M = {
     },
   },
   config = function()
-    require('nvim-treesitter-textobjects').setup {
-      move = {
-        set_jumps = true,
+    require('nvim-treesitter.configs').setup {
+      highlight = {
+        enable = true,
+      },
+      textobjects = {
+        move = {
+          enable = true,
+          set_jumps = true,
+        },
       },
     }
 
-    local move = require 'nvim-treesitter-textobjects.move'
+    local move = require 'nvim-treesitter.textobjects.move'
 
     local function make_diff_wrapper(func)
       return function(query, ...)
