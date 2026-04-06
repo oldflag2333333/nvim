@@ -7,10 +7,13 @@ local function get_bundles()
   local java_dbg_path = os.getenv 'VSCODE_JAVA_DEBUG'
   local java_test_path = os.getenv 'VSCODE_JAVA_TEST'
 
-  local jar_patterns = {
-    java_dbg_path .. '/server/com.microsoft.java.debug.plugin-*.jar',
-    java_test_path .. '/server/*.jar',
-  }
+  local jar_patterns = {}
+  if java_dbg_path and java_dbg_path ~= '' then
+    table.insert(jar_patterns, java_dbg_path .. '/server/com.microsoft.java.debug.plugin-*.jar')
+  end
+  if java_test_path and java_test_path ~= '' then
+    table.insert(jar_patterns, java_test_path .. '/server/*.jar')
+  end
 
   -- These jar are not 'bundle'.
   local exclude = {
@@ -32,21 +35,31 @@ local function get_bundles()
 end
 
 local function get_cmd(root_dir)
-  local name = root_dir and vim.fs.basename(root_dir)
+  local project_dir = root_dir or (vim.uv or vim.loop).cwd() or vim.fn.getcwd()
+  local name = vim.fs.basename(project_dir) or 'default'
+  local jdtls = vim.fn.exepath 'jdtls'
+
+  if jdtls == '' then
+    return nil
+  end
 
   local config_dir = vim.fn.stdpath 'cache' .. '/jdtls/' .. name .. '/config'
   local workspace_dir = vim.fn.stdpath 'cache' .. '/jdtls/' .. name .. '/workspace'
 
-  local lombok_dir = os.getenv 'LOMBOK' .. '/share/java/lombok.jar'
-
-  return {
-    vim.fn.exepath 'jdtls',
-    '--jvm-arg=-javaagent:' .. lombok_dir,
+  local cmd = {
+    jdtls,
     '-configuration',
     config_dir,
     '-data',
     workspace_dir,
   }
+
+  local lombok_home = os.getenv 'LOMBOK'
+  if lombok_home and lombok_home ~= '' then
+    table.insert(cmd, 2, '--jvm-arg=-javaagent:' .. lombok_home .. '/share/java/lombok.jar')
+  end
+
+  return cmd
 end
 
 local function get_setting()
@@ -165,8 +178,13 @@ return {
     local specs = { 'gradlew', '.git', 'mvnw', '.workspace' }
     local root_dir = require('oldvim.util').root.get_root(specs)
 
+    local cmd = get_cmd(root_dir)
+    if not cmd then
+      return
+    end
+
     local config = {
-      cmd = get_cmd(root_dir),
+      cmd = cmd,
       filetypes = java_filetypes,
       root_dir = root_dir,
       init_options = {
@@ -201,7 +219,7 @@ return {
 
     local function attach_jdtls()
       jdtls.start_or_attach(config)
-      vim.lsp.set_log_level 'off'
+      vim.lsp.log.set_level 'off'
     end
 
     util.autocmd('FileType', {
