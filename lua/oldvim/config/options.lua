@@ -34,6 +34,8 @@ opt.autowrite = true
 --  See `:help 'clipboard'`
 opt.clipboard = 'unnamedplus'
 
+opt.foldenable = false
+
 -- Enable break indent
 opt.breakindent = true
 

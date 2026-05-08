@@ -89,18 +89,15 @@ local M = {
       end,
     },
   },
-  config = function()
-    -- On `main` branch, setup() is optional and only accepts install_dir
-    -- and local_parsers. Since parsers are managed by Nix (symlinked to
-    -- ~/.local/share/nvim/lazy/nvim-treesitter/parser/, on runtimepath),
-    -- no setup() call is needed.
-    --
-    -- Features (highlight, indent, fold) are enabled via Neovim core API
-    -- and nvim-treesitter's indentexpr(), NOT via setup{} options.
-    --
+  config = function(plugin)
+    -- `main` branch stores queries in runtime/queries/ instead of
+    -- queries/. lazy.nvim's add_to_rtp only adds the plugin root,
+    -- so we must explicitly add runtime/ to the search path.
+    vim.opt.rtp:prepend(plugin.dir .. '/runtime')
+
+    -- Feature enablement via Neovim core API.
     -- vim.treesitter.language.add() returns true iff the parser is
-    -- available, so it safely guards against filetypes like dashboard,
-    -- neo-tree, toggleterm that don't have tree-sitter parsers.
+    -- available — safe guard for dashboard/neo-tree/toggleterm etc.
 
     vim.api.nvim_create_autocmd('FileType', {
       callback = function(args)
