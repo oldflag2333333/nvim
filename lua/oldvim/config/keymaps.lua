@@ -9,7 +9,7 @@ map('n', '<Esc>', '<cmd>nohlsearch<CR>')
 map('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 map('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 
-map('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+map('n', '<leader>de', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 map('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- TIP: Disable arrow keys in normal mode
@@ -44,7 +44,7 @@ map('v', '<A-k>', ":m '<-2<cr>gv=gv",         { desc = 'Move up' })
 -- Clear search with <esc>
 map({ 'i', 'n' }, '<esc>', '<cmd>noh<cr><esc>', { desc = 'Escape and clear hlsearch' })
 
-map('n', '<leader>e', '<cmd>Explore<cr>', { desc = 'Toggole Explore' })
+map('n', '<leader>e', '<cmd>Explore<cr>', { desc = 'Toggle Explore' })
 
 local function delete_buf()
   require('mini.bufremove').delete()

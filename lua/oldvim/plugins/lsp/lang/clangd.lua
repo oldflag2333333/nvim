@@ -4,9 +4,6 @@ function M.setup(capabilities)
   -- capabilities.offsetEncoding = { 'utf-16' }
 
   local clangd = {
-    keys = {
-      -- { '<leader>cR', '<cmd>ClangdSwitchSourceHeader<cr>', desc = 'Switch Source/Header (C/C++)' },
-    },
     capabilities = capabilities,
     cmd = {
       'clangd',
@@ -24,7 +21,7 @@ function M.setup(capabilities)
     },
   }
   vim.lsp.config.clangd = clangd
-  vim.lsp.enable('clangd')
+  vim.lsp.enable 'clangd'
 end
 
 return M

@@ -143,12 +143,16 @@ util.autocmd('LspAttach', {
     -- When you move your cursor, the highlights will be cleared (the second autocommand).
     local client = vim.lsp.get_client_by_id(event.data.client_id)
     if client and client.server_capabilities.documentHighlightProvider then
+      local highlight_group = vim.api.nvim_create_augroup('oldvim_lsp_document_highlight_' .. event.buf, { clear = true })
+
       util.autocmd({ 'CursorHold', 'CursorHoldI' }, {
+        group = highlight_group,
         buffer = event.buf,
         callback = vim.lsp.buf.document_highlight,
       })
 
       util.autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+        group = highlight_group,
         buffer = event.buf,
         callback = vim.lsp.buf.clear_references,
       })
