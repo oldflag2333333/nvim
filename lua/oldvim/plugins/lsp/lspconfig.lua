@@ -13,6 +13,7 @@ local M = { -- LSP Configuration & Plugins, see `:help lsp-vs-treesitter`
     -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
     require('oldvim.plugins.lsp.lang.lua_ls').setup(capabilities)
     require('oldvim.plugins.lsp.lang.clangd').setup(capabilities)
+    require('oldvim.plugins.lsp.lang.rust_analyzer').setup(capabilities)
   end,
 }
 
