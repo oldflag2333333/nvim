@@ -128,9 +128,67 @@ util.autocmd('LspAttach', {
     -- or a suggestion from your LSP for this to activate.
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-    -- Opens a popup that displays documentation about the word under your cursor
-    --  See `:help K` for why this keymap
-    map('K', vim.lsp.buf.hover, 'Hover Documentation')
+    local function focus_float(win, origin_win)
+      if not win or not vim.api.nvim_win_is_valid(win) then
+        return
+      end
+
+      local buf = vim.api.nvim_win_get_buf(win)
+      vim.keymap.set('n', '<Esc>', function()
+        if vim.api.nvim_win_is_valid(win) then
+          vim.api.nvim_win_close(win, true)
+        end
+        if vim.api.nvim_win_is_valid(origin_win) then
+          vim.api.nvim_set_current_win(origin_win)
+        end
+      end, { buffer = buf, silent = true, desc = 'Close floating window' })
+
+      vim.api.nvim_set_current_win(win)
+    end
+
+    local function focus_lsp_float(origin_buf, origin_win, attempts)
+      if attempts == 0 then
+        return
+      end
+
+      vim.defer_fn(function()
+        local win = vim.b[origin_buf].lsp_floating_preview
+        if win and vim.api.nvim_win_is_valid(win) then
+          focus_float(win, origin_win)
+          return
+        end
+
+        focus_lsp_float(origin_buf, origin_win, attempts - 1)
+      end, 20)
+    end
+
+    local function hover_or_diagnostic()
+      local origin_buf = event.buf
+      local origin_win = vim.api.nvim_get_current_win()
+      local diagnostics = vim.diagnostic.get(event.buf, {
+        lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
+        severity = { min = vim.diagnostic.severity.WARN },
+      })
+
+      if #diagnostics > 0 then
+        local _, win = vim.diagnostic.open_float(nil, {
+          border = 'rounded',
+          close_events = {},
+          scope = 'line',
+          severity = { min = vim.diagnostic.severity.WARN },
+        })
+        focus_float(win, origin_win)
+        return
+      end
+
+      vim.lsp.buf.hover {
+        border = 'rounded',
+        close_events = {},
+      }
+      focus_lsp_float(origin_buf, origin_win, 20)
+    end
+
+    map('K', hover_or_diagnostic, 'Hover Documentation or Diagnostic')
 
     -- NOTE: This is not Goto Definition, this is Goto Declaration.
     --  For example, in C this would take you to the header
